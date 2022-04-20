@@ -62,5 +62,26 @@ void draw(){
   fill(253, 184, 19); 
   ellipse(590,50, 120, 120); 
   
+  image(groundhogIdleImg,xPos-40, yPos-40); 
+  delay(100);  
+  if (keyPressed) {
+    if (keyCode == UP) {
+      yPos -= 80;
+      image(groundhogDownImg,xPos-40, yPos-40);
+    }
+    if (keyCode == DOWN) {
+      yPos += 80;
+      image(groundhogDownImg,xPos-40, yPos-40);
+    }
+    if (keyCode == LEFT) {
+      xPos -= 80;
+      image(groundhogLeftImg,xPos-40, yPos-40);
+    }
+    if (keyCode == RIGHT) {
+      xPos += 80;
+      image(groundhogRightImg,xPos-40, yPos-40);
+    }
+  } 
+  
   
 }
