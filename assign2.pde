@@ -1,87 +1,240 @@
-PImage title; 
-PImage bgImg; 
-PImage soilImg; 
-PImage lifeImg; 
-PImage soldierImg; 
-int s = 0; 
+PImage bkImg;
+PImage titleImg;
+PImage soilImg;
+PImage soldierImg;
+PImage hogImg;
+PImage hogDImg;
+PImage hogRImg;
+PImage hogLImg;
+PImage heartImg;
+PImage cabImg;
+PImage gameOverImg;
+PImage startBtn;
+PImage startBtnH;
+PImage resetBtn;
+PImage resetBtnH;
 
-PImage groundhogDownImg; 
-PImage groundhogIdleImg; 
-PImage groundhogLeftImg; 
-PImage groundhogRightImg; 
-int g = 0;
+boolean cabStat;
+int lifeCount,timer,gameStat,hogStat;
+float soldierX,soldierY,hogX,hogY,cabX,cabY;
 
-PImage cabbageImg; 
-PImage gameoverImg; 
+final int HOG_IDLE=0,HOG_DOWN=1,HOG_LEFT=2,HOG_RIGHT=3;
+final int GAME_START=0,GAME_RUN=1,GAME_OVER=2;
+final int BTN_WIDTH=144,BTN_HEIGHT=60;
+final int BLOCK=80;
 
-PImage startHoveredImg;
+void setup() {
+  size(640, 480, P2D);
 
-int xPos=200, yPos=120;
-
-void setup(){
-  size(640, 480, P2D); 
-      
-    bgImg = loadImage("img/bg.jpg"); 
-    soilImg = loadImage("img/soil.png"); 
-    lifeImg = loadImage("img/life.png"); 
-    soldierImg = loadImage("img/soldier.png"); 
-        
-    groundhogDownImg = loadImage("img/groundhogDown.png");
-    groundhogIdleImg = loadImage("img/groundhogIdle.png"); 
-    groundhogLeftImg = loadImage("img/groundhogLeft.png");
-    groundhogIdleImg = loadImage("img/groundhogIdle.png");
-    groundhogRightImg = loadImage("img/groundhogRight.png");
-      
-    cabbageImg = loadImage("img/cabbage.png");
-    
-    startHoveredImg= loadImage("img/startHovered.png");  
-    
+  bkImg = loadImage("img/bg.jpg");
+  titleImg = loadImage("img/title.jpg");
+  gameOverImg = loadImage("img/gameover.jpg");
+  startBtn = loadImage("img/startNormal.png");
+  startBtnH = loadImage("img/startHovered.png");
+  resetBtn = loadImage("img/restartNormal.png");
+  resetBtnH = loadImage("img/restartHovered.png");
+  soilImg = loadImage("img/soil.png");
+  heartImg = loadImage("img/life.png");
+  hogImg = loadImage("img/groundhogIdle.png");
+  hogDImg = loadImage("img/groundhogDown.png");
+  hogLImg = loadImage("img/groundhogLeft.png");
+  hogRImg = loadImage("img/groundhogRight.png");
+  soldierImg = loadImage("img/soldier.png");
+  cabImg = loadImage("img/cabbage.png");
+  
+  gameStat=GAME_START;
+  
 }
 
-void draw(){   
-     
-  image(bgImg,0,0);  
-   
-  image(soilImg,0,160);  
-  image(lifeImg,10,10);   
-  image(lifeImg,80,10);   
+void draw() {
   
-  image(soldierImg,s,320);   
-    s=s+1;  
-    if(s>640){  
-      s = 0;  
-    }  
-    
-  image(cabbageImg,560,160); 
+  switch(gameStat){
+    case GAME_START:
+      image(titleImg,0,0);
+      
+      if(mouseX>248&&mouseX<248+BTN_WIDTH&&mouseY>360&&mouseY<360+BTN_HEIGHT){
+        image(startBtnH,248,360);
+      }else{
+        image(startBtn,248,360);
+      }
+      
+      break;
+    case GAME_RUN:
 
-  strokeWeight(15.0); 
-  stroke(124,204,25); 
-  line(0,152.5,640,152.5); 
- 
-  stroke(255,255,0); 
-  fill(253, 184, 19); 
-  ellipse(590,50, 120, 120); 
-  
-  image(groundhogIdleImg,xPos-40, yPos-40); 
-  delay(100);  
-  if (keyPressed) {
-    if (keyCode == UP) {
-      yPos -= 80;
-      image(groundhogDownImg,xPos-40, yPos-40);
+        image(bkImg,0,0);        
+        image(soilImg,0,160);
+        noStroke();
+        fill(124,204,25);
+        rect(0,160,640,-15);
+        
+        
+        for(int i=0;i<lifeCount;i++)
+        {
+          image(heartImg,10+i*70,10);
+        }
+        
+
+        stroke(255,255,0);
+        strokeWeight(5);
+        fill(253,184,19);
+        ellipse(590,50,120,120);
+        
+        
+        if(timer==15){
+          hogStat=HOG_IDLE;
+          if(hogY%BLOCK<30){
+            hogY=hogY-hogY%BLOCK;
+          }else{
+            hogY=hogY-hogY%BLOCK+BLOCK;
+          }
+          if(hogX%BLOCK<30){
+            hogX=hogX-hogX%BLOCK;
+          }else{
+            hogX=hogX-hogX%BLOCK+BLOCK;
+          }
+          println(hogX);
+          println(hogY);
+          timer=0;
+        }
+        
+        
+        switch(hogStat){
+          case HOG_IDLE:
+            image(hogImg,hogX,hogY);
+            break;
+          case HOG_DOWN:
+            image(hogDImg,hogX,hogY);
+            timer+=1;
+            hogY+=80.0/15;
+            break;
+          case HOG_RIGHT:
+            image(hogRImg,hogX,hogY);
+            timer+=1;
+            hogX+=80.0/15;
+            break;
+          case HOG_LEFT:
+            image(hogLImg,hogX,hogY);
+            timer+=1;
+            hogX-=80.0/15;
+            break;
+        }
+        
+        
+        if(timer==15){
+          hogStat=HOG_IDLE;
+          if(hogY%BLOCK<30){
+            hogY=hogY-hogY%BLOCK;
+          }else{
+            hogY=hogY-hogY%BLOCK+BLOCK;
+          }
+          if(hogX%BLOCK<30){
+            hogX=hogX-hogX%BLOCK;
+          }else{
+            hogX=hogX-hogX%BLOCK+BLOCK;
+          }
+
+          timer=0;
+        }
+        
+
+        
+        image(soldierImg,soldierX-80,soldierY);
+        soldierX+=3;
+        soldierX%=720;
+        
+        
+        if(cabStat){
+          image(cabImg,cabX,cabY);
+        
+          
+          if(hogX<cabX+BLOCK&&hogX+BLOCK>cabX&&hogY<cabY+BLOCK&&hogY+BLOCK>cabY){
+            cabStat=false;
+            lifeCount++;
+          }
+        }
+        
+        
+        if(hogX<soldierX-80+BLOCK&&hogX+BLOCK>soldierX-80&&hogY<soldierY+BLOCK&&hogY+BLOCK>soldierY){
+          lifeCount--;
+          hogStat=HOG_IDLE;
+          
+         
+          hogX=4*BLOCK;
+          hogY=BLOCK;
+        }
+        
+        
+      
+        if(lifeCount==0){
+          gameStat=GAME_OVER;
+        }
+        
+        break;
+    case GAME_OVER:
+      image(gameOverImg,0,0);
+      
+      if(mouseX>248&&mouseX<248+BTN_WIDTH&&mouseY>360&&mouseY<360+BTN_HEIGHT){
+        image(resetBtnH,248,360);
+      }else{
+        image(resetBtn,248,360);
+      }
+      break;
+  }
+}
+
+void keyPressed(){
+  if(key ==CODED){
+    switch(keyCode){
+      case DOWN:
+        if(hogY+BLOCK<height&&hogStat==HOG_IDLE){
+          hogStat=HOG_DOWN;
+          timer=0;
+        }
+        break;
+      case RIGHT:
+        if(hogX+BLOCK<width&&hogStat==HOG_IDLE){
+          hogStat=HOG_RIGHT;
+          timer=0;
+        }
+        break;
+      case LEFT:
+        if(hogX>0&&hogStat==HOG_IDLE){
+          hogStat=HOG_LEFT;
+          timer=0;
+        }
+        break;
     }
-    if (keyCode == DOWN) {
-      yPos += 80;
-      image(groundhogDownImg,xPos-40, yPos-40);
-    }
-    if (keyCode == LEFT) {
-      xPos -= 80;
-      image(groundhogLeftImg,xPos-40, yPos-40);
-    }
-    if (keyCode == RIGHT) {
-      xPos += 80;
-      image(groundhogRightImg,xPos-40, yPos-40);
-    }
-  } 
-  
-  
+  }
+      
+}
+
+void keyReleased(){
+}
+
+void mouseClicked(){
+  if(mouseX>248&&mouseX<248+BTN_WIDTH&&mouseY>360&&mouseY<360+BTN_HEIGHT&&(gameStat==GAME_START||gameStat==GAME_OVER)){
+    
+    soldierX=0;
+    soldierY=BLOCK*(int(random(4)+2));
+    
+    
+    cabX=BLOCK*int(random(8));
+    cabY=BLOCK*(int(random(4))+2);
+    
+    
+    cabStat=true;
+    
+    
+    lifeCount=2;
+    
+    
+    hogX=4*BLOCK;
+    hogY=BLOCK;
+    
+    
+    hogStat=HOG_IDLE;
+    
+    
+    gameStat=GAME_RUN;
+  }
 }
